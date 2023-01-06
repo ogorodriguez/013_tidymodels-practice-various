@@ -1,7 +1,7 @@
-name: "013_tidymodels-practice-various"
+name: 013_tidymodels-practice-various
 output_dir: ../docs
 navbar:
-  title: "Tidymodels Learning from Various Sites"
+  title: Tidymodels Learning from Various Sites
   left:
   - text: Home
     href: index.html
@@ -9,6 +9,10 @@ navbar:
     href: about.html
   - text: License
     href: license.html
+  right:
+  - icon: fab fa-github
+    text: Source code
+    href: https://github.com/ogorodriguez/013_tidymodels-practice-various
 output:
   workflowr::wflow_html:
     toc: yes
