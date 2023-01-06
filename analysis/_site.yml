@@ -1,7 +1,7 @@
 name: "013_tidymodels-practice-various"
 output_dir: ../docs
 navbar:
-  title: "013_tidymodels-practice-various"
+  title: "Tidymodels Learning from Various Sites"
   left:
   - text: Home
     href: index.html
