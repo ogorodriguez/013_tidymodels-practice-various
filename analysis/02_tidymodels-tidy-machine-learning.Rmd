@@ -1,0 +1,186 @@
+---
+title: "02_tidymodels-tidy-machine-learning-R"
+author: "LJ"
+date: "2023-01-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      cache = TRUE,
+                      autodep = TRUE,
+                      cache.lazy = FALSE,
+                      message = FALSE, 
+                      include = TRUE,
+                      dpi = 180,
+                      fig.width = 8, 
+                      fig.height = 5)
+
+pacman::p_load(tidyverse,
+               janitor,
+               here,
+               readxl,
+               kableExtra,
+               tidymodels,
+               skimr)
+
+ggplot2::theme_set(theme_minimal())
+
+```
+
+## Introduction
+
+In this notebook I will review the website from Rebecca Barter on `tidymodels.`  I have learned purrr, and dplyr with
+this person's website before.  It excels in explaining R packages and their concepts in simple ways.
+
+[Rebecca Barter's post on Tidymodels](https://www.rebeccabarter.com/blog/2020-03-25_machine_learning/)
+
+She already tried to learn the `caret` package.  This package was the inception of `tidymodels` creator,
+Max Kuhn.  The objective was to create a unifed interface to perform machine learing in R.
+
+`caret` was not a tidy package.  `tidymodels` has resolved that and it will subsitute
+other previous package.
+
+Rebecca bases her study to learn `tidymodels` from the following sources:
+
+- [Introduction to Maching Learning with the tidyverse](https://education.rstudio.com/blog/2020/02/conf20-intro-ml/)
+- [A Gentle introduction to tidymodels](https://education.rstudio.com/blog/2020/02/conf20-intro-ml/)
+
+Sources that I will include in this learning phase.
+
+## What is tidymodels?
+
+`Tidymodels` consists of several packages, just like `tidyverse`.  These packages
+include:
+
+- `rsample` for sample splitting to get train, test and cross-validation data
+- `recipes` for pre-processing
+- `parsnip` for specifying the model
+- `yardstick` for evaluation the model
+
+and there are [many more](https://www.tidymodels.org/packages/).  The suite can be loaded into R.  
+The author will add other packages for tuning parameter, `tune`, and `workflows` for putting it all together.
+
+## Setting up the work
+
+For the data to use in this notebook, we'll load the package `mlbench`.
+This contains the data on Pima Indian Diabetes.
+
+```{r loading the packages}
+# Load the tidymodels and other packages
+# tidymodels and tidyverse loaded at start
+# From mlbench, we get the dataset to work with
+pacman::p_load(workflows,
+               tune,
+               mlbench)
+
+```
+
+### The dataset
+
+The data set to use is Pima Indian Women's diabetes.  This dataset is from the National
+Institute of Diabeter, Digestive, and Kidney Diseases.  It contains information on 
+768 indian women from Phoenix, Arizona, USA.
+
+Interestingly, these indian people are called "Pima" because that is the word they used 
+when interacting with Spaish colinists a lot.  "Pima" is believed to mean "I don't know!"
+
+The dataset include a number of prediction variables such as number of pregnancies, 
+BMI, age, diabetes pedigree, etc.  
+
+```{r rename and visualize the dataset}
+data("PimaIndiansDiabetes")
+
+diabetes_orig <- PimaIndiansDiabetes
+
+diabetes_orig %>% 
+  glimpse()
+
+```
+
+```{r view a random subset of the data}
+diabetes_orig %>% 
+  dplyr::slice_sample(n = 10)
+
+```
+
+```{r view a summary of the data}
+diabetes_orig %>% 
+  skimr::skim()
+
+```
+
+This dataset contains lots of 0's in sections where it is not plausible (BMI for instance.)
+This can be attributed to missing values in the dataset.
+
+Let's check the tricep skin fold variable distribution, and the BMI distribution to check
+the shape of the dataset.
+
+```{r checking distibution of variable tricep}
+diabetes_orig %>% 
+  ggplot() +
+    geom_histogram(aes(x = triceps))
+
+```
+
+
+```{r checking distibution of variable mass}
+diabetes_orig %>% 
+  ggplot() +
+    geom_histogram(aes(x = mass))
+
+```
+
+We can definitely see the values marked as 0, so far from the distribution of data.  It can 
+also be seen in other variables as well.
+
+For this we will do a transformation of the dataset so that all 0's become NAs
+
+```{r}
+diabetes_clean <- diabetes_orig %>% 
+  mutate(across(c(triceps, glucose, pressure, insulin, mass),
+         function(.x) {
+           case_when(
+             .x == 0 ~ as.numeric(NA),  # if the entry is 0, replace it for NA
+             TRUE ~ .x)                 # otherwise leave it as it is
+         }))
+
+diabetes_clean %>% 
+  dplyr::slice_sample(n = 10)
+
+```
+Once our data is hopefully clean, we can now start doing our machine learning analysis.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
