@@ -557,15 +557,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustreedc7be43c8bdb14a293867a5e16426f1d0e91c142targetblankdc7be43a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustree999008cffcc280276ebaca23d2b8dbad3f9c4ce8targetblank999008ca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/dc7be43c8bdb14a293867a5e16426f1d0e91c142" target="_blank">dc7be43</a>
+<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/999008cffcc280276ebaca23d2b8dbad3f9c4ce8" target="_blank">999008c</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustreedc7be43c8bdb14a293867a5e16426f1d0e91c142targetblankdc7be43a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustree999008cffcc280276ebaca23d2b8dbad3f9c4ce8targetblank999008ca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -575,7 +575,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/dc7be43c8bdb14a293867a5e16426f1d0e91c142" target="_blank">dc7be43</a>.
+<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/999008cffcc280276ebaca23d2b8dbad3f9c4ce8" target="_blank">999008c</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -595,6 +595,9 @@ Ignored files:
     Ignored:    analysis/01_classification-tidymodels.nb.html
     Ignored:    analysis/01_classification-tidymodels_cache/
     Ignored:    analysis/02_tidymodels-tidy-machine-learning_cache/
+
+Unstaged changes:
+    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -641,6 +644,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/blob/999008cffcc280276ebaca23d2b8dbad3f9c4ce8/analysis/02_tidymodels-tidy-machine-learning.Rmd" target="_blank">999008c</a>
+</td>
+<td>
+ogorodriguez
+</td>
+<td>
+2023-01-21
+</td>
+<td>
+Added the recipes and parsnip sections
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/ogorodriguez/013_tidymodels-practice-various/c40832a84b49606c3cbd0093f93107c3cb84cd3e/docs/02_tidymodels-tidy-machine-learning.html" target="_blank">c40832a</a>
+</td>
+<td>
+ogorodriguez
+</td>
+<td>
+2023-01-21
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1315,8 +1352,7 @@ diabetes_clean %&gt;%
 231        4     142       86      NA      NA 44.0    0.645  22      pos
 459       10     148       84      48     237 37.6    1.001  51      pos
 522        3     124       80      33     130 33.2    0.305  26      neg</code></pre>
-<p>Once our data is hopefully clean, we can now start doing our machine
-learning analysis.</p>
+<p>Now let’s check our new clean dataset summary.</p>
 <pre class="r"><code>diabetes_clean %&gt;% 
   skim()</code></pre>
 <table style="width: auto;" class="table table-condensed">
@@ -1777,6 +1813,225 @@ $ mass     &lt;dbl&gt; 33.6, 26.6, 23.3, 28.1, 43.1, 25.6, 31.0, 35.3, 30.5, NA,
 $ pedigree &lt;dbl&gt; 0.627, 0.351, 0.672, 0.167, 2.288, 0.201, 0.248, 0.134, 0.158…
 $ age      &lt;dbl&gt; 50, 31, 32, 21, 33, 30, 26, 29, 53, 54, 30, 34, 57, 59, 51, 3…
 $ diabetes &lt;fct&gt; pos, neg, pos, neg, pos, neg, pos, neg, pos, pos, neg, pos, n…</code></pre>
+<p>Once our data is hopefully clean, we can now start doing our machine
+learning analysis with the tidymodels package.</p>
+</div>
+</div>
+<div id="tidymodels-process" class="section level2">
+<h2>Tidymodels Process</h2>
+<div id="splitting-the-data-traintest" class="section level3">
+<h3>Splitting the data: train/test</h3>
+<p>To do a model we need to separate the dataset into parts: one for
+training the model (or models), one for validating the good model (when
+training on many different models to see which one is best,) and one for
+testing whether the model we validated is actually the good one.</p>
+<p>The training data is used to fit our model and tune its parameters,
+the testing data is used to evaluate our final model’s performance.</p>
+<p>The <code>rsample</code> package is used to create these split
+objects.</p>
+<pre class="r"><code>set.seed(234589)
+# split the data into training (75%) and testing (25%)
+diabetes_split &lt;- rsample::initial_split(diabetes_clean,
+                                         prop = 3/4)
+
+diabetes_split</code></pre>
+<pre><code>&lt;Training/Testing/Total&gt;
+&lt;576/192/768&gt;</code></pre>
+<p>The training output above is telling us that we have split the set
+into two groups: a. The training set has 576 observations b. The testing
+set has 192 observations c. The last number is the number of
+observations overall: 768</p>
+<p>The training and testing sets can be extracted from the split object
+using the corresponding functions <code>training()</code>, and
+<code>testing()</code></p>
+<pre class="r"><code># extract training and testing sets
+diabetes_train &lt;- training(diabetes_split)
+diabetes_test &lt;- testing(diabetes_split)</code></pre>
+<p>For parameter tuning, we will need to have various versions of the
+training set. It helps to create a cross-validation version of the
+training set using the <code>vfold_cv()</code> function.</p>
+<pre class="r"><code># creating CV object from training data
+diabetes_cv &lt;- rsample::vfold_cv(diabetes_train)</code></pre>
+</div>
+<div id="defining-a-recipe" class="section level3">
+<h3>Defining a recipe</h3>
+<p>Recipes allows you to specify the formula to apply to the predictor
+variables to build the desire model. It allows you to accommodate or
+revise those variables of that formula prior to the execution of the
+model itself (this is called pre-processing.)</p>
+<p>There various pre-processing steps that can be done to our variables.
+Some of them are: normalization, imputation, PCA, etc. There are many
+many pre-processing steps. Their selection will depend on the variables
+we have on our set.</p>
+<p>The list of pre-processing steps can be found here: link needed.</p>
+<p>The formula usually has the format of outcome = f(predictors).</p>
+<p>In our dataset the outcome is to determine whether the patients has
+diabetes based on the observations collected, but more importantly, is
+to determine whether these observations are the indicated ones to
+predict such an outcome, how reliable are they to get a diabetes
+diagnosis.</p>
+<p>Creating a recipe then has two parts layered one on top of the other
+by using the pipe.</p>
+<ol style="list-style-type: decimal">
+<li><p>First we specify the formula using the <code>recipe()</code>
+function, to specify which one is the outcome variable and which
+variables to use as predictors to create our formula. In this case, we
+will use them all.</p></li>
+<li><p>Specify the pre-processing steps to do the the predictor
+variables. Other cases of pre-processing may be scaling, creating dummy
+variables, etc.</p></li>
+</ol>
+<p>In this occasion we will do the following:</p>
+<pre class="r"><code># define the recipe
+diabetes_recipe &lt;-
+  recipe(diabetes ~ .,                 # the formula outcome is diabetes and the &quot;.&quot; is used to state that the rest of the columns will be the predictors.
+  data = diabetes_clean) %&gt;% 
+  step_normalize(all_numeric()) %&gt;%    # pre-processing step to make all predictors numeric
+  step_impute_knn(all_predictors())    # pre-processing step to make impute the knn to all other columns</code></pre>
+<p>The steps used here to preprocess the data are called “Role
+selections”. They specify that we want to apply the step to all numeric
+variables and all predictor variables. Check <code>?selections</code> to
+see other examples.</p>
+<p>For detailed information on normalizing data and why it is useful, <a
+href="https://machinelearningmastery.com/using-normalization-layers-to-improve-deep-learning-models/">please
+see here</a>. In short, normalization makes our data centered and
+scaled. Centered refers to fact that our data will have a mean of 0 and
+a standard deviation of 1.</p>
+<p>For detailed information on the Knn (K-nearest neighbor imputation),
+please <a
+href="https://machinelearningmastery.com/knn-imputation-for-missing-values-in-machine-learning/">click
+here.</a> In short, this is used when the dataset has lots of missing
+values, and we need to impute an estimated numeric value based on the
+values of nearby observations.</p>
+<p>The dataset used to create the recipe was
+<code>diabetes_clean</code>, our working full dataset. Any of the other
+sets: the training, or split object could have been used as well.<br />
+It doesn’t matter what is used. All the recipe takes from the data at
+this point is the <em>names and roles</em> of the outcome and
+predictors. Once the recipe is defined, it can then be applied to
+specific dataset later.</p>
+<p>For larger datasets, the head of the data can then be used to pass
+the recipe to smaller dataset to save time and memory.</p>
+<p>If we print on the console the diabetes_recipe object, it will only
+show how many variables we have used as outcome and how many as
+predictors. It will also show us the pre-processing steps applied.</p>
+<pre class="r"><code>diabetes_recipe</code></pre>
+<pre><code>Recipe
+
+Inputs:
+
+      role #variables
+   outcome          1
+ predictor          8
+
+Operations:
+
+Centering and scaling for all_numeric()
+K-nearest neighbor imputation for all_predictors()</code></pre>
+<p>As indicated before, the recipe was a apply to a dataset only to
+identify which variable is the outcome, which will be used as
+predictors, and which steps are needed to make the predictors ready for
+analysis. Now, if we want to apply the recipe to another data set (the
+training, or testing, etc.) we need to use other functions.</p>
+<ol style="list-style-type: lower-alpha">
+<li><code>prep()</code> will apply the recipe to the new dataset</li>
+<li><code>juice()</code> will extract the pre-processed data. Meaning,
+it will show us how our dataset will look after the application of the
+recipe steps.</li>
+</ol>
+<pre class="r"><code>diabetes_train_preprocessed &lt;- 
+  diabetes_recipe %&gt;% 
+  prep(diabetes_train) %&gt;% 
+  juice()                      # This step is optional.
+
+diabetes_train_preprocessed %&gt;% 
+  dplyr::slice_sample(n = 10)</code></pre>
+<pre><code># A tibble: 10 × 9
+   pregnant glucose pressure triceps  insulin    mass pedigree    age diabetes
+      &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;   
+ 1  -1.14   -0.521     1.40  -0.183  -0.239   -0.412    -0.822  1.05  neg     
+ 2  -0.548   0.0365   -1.68   1.26    0.0429   0.537     1.03  -0.451 neg     
+ 3   0.0447  0.693     1.07   0.521   0.854    1.66      0.517 -0.953 pos     
+ 4  -0.251  -0.817    -1.36   0.428  -0.309   -1.12      1.41   0.468 neg     
+ 5  -0.844   0.168    -1.36  -0.0348 -0.00626 -0.541     0.983 -1.04  neg     
+ 6  -0.251  -1.41     -1.84   0.243  -0.530   -0.211    -0.669 -0.618 pos     
+ 7   0.637   1.09      0.100  0.243   0.330   -0.455     1.10   0.468 neg     
+ 8   0.933  -0.226    -0.548  0.762  -0.373    0.0482   -0.639  0.719 pos     
+ 9  -0.251   1.38     -0.224 -1.05   -0.391   -0.124    -0.610 -0.451 pos     
+10   0.637   2.04      1.72  -0.276   0.171    1.20      2.95   0.969 neg     </code></pre>
+<p>Some considerations. Extracting the pre-processed data with
+<code>juice()</code> is not necessary since the prepped dataset will
+carry it during the machine learning process. It is used under the
+hood.</p>
+<p>With this done then, we can now specify which model to use for our
+machine learning analysis.</p>
+</div>
+<div id="specifying-the-model" class="section level3">
+<h3>Specifying the model</h3>
+<p>After splitting the data into training and testing, identifying
+outcome and predictors and knowing which steps to do pre-process our
+data, and getting a pre-process dataset for that, now it is time to
+specify which model will help us get the prediction of diabetes using
+the predictors indicated.</p>
+<p>For that <code>parsnip</code> package aids in providing a unified
+interface for the long list of models available in R.<br />
+With one way to specify a model, we can then use this specification to
+generate be it a linear model, a regression model, a random forest
+model, or support vector machine (SVM), etc.</p>
+<p>The full list of models can be searched in <a
+href="https://www.tidymodels.org/find/parsnip/">the tidymodels
+website.</a></p>
+<p>Some primary components will need to be taken into consideration when
+specifying a model.</p>
+<ol style="list-style-type: lower-alpha">
+<li>The <strong>model type</strong>, which requires to specify the model
+we will use, for example, a random forest, or logistic regression,
+etc.</li>
+<li>The <strong>arguments</strong> or parameters to use within the model
+specified and that are consistent across different models. Set using
+<code>set_args()</code></li>
+<li>The <strong>engine</strong> or underlying package where the model
+comes from (e.g. “ranger” for the range implemenation of Random Forest)
+using the <code>set_engine()</code> function.</li>
+<li>The <strong>mode</strong> refers to the type of prediction since
+many packages can do both classification (binary or categorical) or
+regression (continous prediction), set using
+<code>set_mode()</code></li>
+</ol>
+<p>In this notebook,the model type used can be the Random Forest for the
+purpose of classification. The argument for this will be
+<code>mtry</code> parameter to help us get the number of randomly
+selected variables to be considered at each split in the trees. Then, we
+we would define the following model specification:</p>
+<pre class="r"><code>rf_model &lt;- 
+  parsnip::rand_forest() %&gt;%                                   # specify that the model is random forest
+  parsnip::set_args(mtry = tune()) %&gt;%                         # specify that the `mtry` parameter needs to be tuned
+  parsnip::set_engine(&quot;ranger&quot;, importance = &quot;impurity&quot;) %&gt;%   # select the engine/package that underlies the model
+  parsnip::set_mode(&quot;classification&quot;)                          # choose either binary classification or continous regression</code></pre>
+<p>For examining the importance of the variables in the final model, we
+need to add the <code>importance</code> argument. In the “ranger”
+package the options for this argument are “impurity” an
+“permutation”</p>
+<p>For instance, if instead of using a Random Forest model, we would
+like to specify a Logistic regression model, we could do the
+following:</p>
+<pre class="r"><code>lr_model &lt;- 
+  parsnip::logistic_reg() %&gt;%              # specify that the model is linear regression
+  parsnip::set_engine(&quot;glm&quot;) %&gt;%           # select the engine/packge is &quot;glm&quot;.  No set_args() needed
+  parsnip::set_mode(&quot;classification&quot;)      # choose either binary classification or continous regression</code></pre>
+<p>As can be seen in the last 2 specifications, no dataset has been
+passed as argument. Which means that we are only building the framework
+to be applied, not the actual analysis itself.<br />
+Set in other words, we are not fitting any model yet since no data has
+been passed on to it. Nothing in these models is specific to the
+diabetes dataset.</p>
+<p>These models could be defined way ahead of time to save time.</p>
+<p>This just outlines a description of the model. Also, setting a
+parameter to <code>tune()</code> means that it will be tuned later so
+that the parameter that yield the best performance will be chosen.</p>
+</div>
+<div id="putting-it-all-together-the-workflow" class="section level3">
+<h3>Putting it all together: The Workflow</h3>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
