@@ -136,7 +136,7 @@ also be seen in other variables as well.
 
 For this we will do a transformation of the dataset so that all 0's become NAs
 
-```{r}
+```{r data cleaning replace 0s with NAs}
 diabetes_clean <- diabetes_orig %>% 
   mutate(across(c(triceps, glucose, pressure, insulin, mass),
          function(.x) {
@@ -152,8 +152,16 @@ diabetes_clean %>%
 Once our data is hopefully clean, we can now start doing our machine learning analysis.
 
 
+```{r}
+diabetes_clean %>% 
+  skim()
+```
 
 
+```{r}
+diabetes_clean %>%
+  glimpse()
+```
 
 
 

@@ -1,0 +1,44 @@
+---
+title: "01_classification-tidymodels"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      cache = TRUE,
+                      autodep = TRUE,
+                      cache.lazy = FALSE,
+                      message = FALSE, 
+                      include = TRUE,
+                      dpi = 180,
+                      fig.width = 8, 
+                      fig.height = 5)
+
+pacman::p_load(tidyverse,
+               janitor,
+               here,
+               readxl,
+               kableExtra)
+
+ggplot2::theme_set(theme_minimal())
+
+```
+
+
+## Introduction
+
+```{r}
+iris %>% 
+  janitor::tabyl(Species) %>%
+  # adorn_percentages("col") %>% 
+  janitor::adorn_pct_formatting() %>% 
+  adorn_ns("rear", ) %>% 
+  as_tibble()
+
+```
+
+
+
+
+
+
