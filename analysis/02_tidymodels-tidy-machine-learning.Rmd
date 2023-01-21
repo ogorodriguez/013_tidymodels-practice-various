@@ -7,9 +7,9 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, 
-                      cache = TRUE,
+                      # cache = TRUE,
                       autodep = TRUE,
-                      cache.lazy = FALSE,
+                      # cache.lazy = FALSE,
                       message = FALSE, 
                       include = TRUE,
                       dpi = 180,
