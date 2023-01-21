@@ -3,6 +3,9 @@ title: "02_tidymodels-tidy-machine-learning-R"
 author: "LJ"
 date: "2023-01-21"
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
@@ -30,36 +33,46 @@ ggplot2::theme_set(theme_minimal())
 
 ## Introduction
 
-In this notebook I will review the website from Rebecca Barter on `tidymodels.`  I have learned purrr, and dplyr with
-this person's website before.  It excels in explaining R packages and their concepts in simple ways.
+In this notebook I will review the website from Rebecca Barter on
+`tidymodels.` I have learned purrr, and dplyr with this person's website
+before. It excels in explaining R packages and their concepts in simple
+ways.
 
-[Rebecca Barter's post on Tidymodels](https://www.rebeccabarter.com/blog/2020-03-25_machine_learning/)
+[Rebecca Barter's post on
+Tidymodels](https://www.rebeccabarter.com/blog/2020-03-25_machine_learning/)
 
-She already tried to learn the `caret` package.  This package was the inception of `tidymodels` creator,
-Max Kuhn.  The objective was to create a unifed interface to perform machine learing in R.
+She already tried to learn the `caret` package. This package was the
+inception of `tidymodels` creator, Max Kuhn. The objective was to create
+a unifed interface to perform machine learing in R.
 
-`caret` was not a tidy package.  `tidymodels` has resolved that and it will subsitute
-other previous package.
+`caret` was not a tidy package. `tidymodels` has resolved that and it
+will subsitute other previous package.
 
-Rebecca bases her study to learn `tidymodels` from the following sources:
+Rebecca bases her study to learn `tidymodels` from the following
+sources:
 
-- [Introduction to Maching Learning with the tidyverse](https://education.rstudio.com/blog/2020/02/conf20-intro-ml/)
-- [A Gentle introduction to tidymodels](https://education.rstudio.com/blog/2020/02/conf20-intro-ml/)
+-   [Introduction to Maching Learning with the
+    tidyverse](https://education.rstudio.com/blog/2020/02/conf20-intro-ml/)
+-   [A Gentle introduction to
+    tidymodels](https://education.rstudio.com/blog/2020/02/conf20-intro-ml/)
 
 Sources that I will include in this learning phase.
 
 ## What is tidymodels?
 
-`Tidymodels` consists of several packages, just like `tidyverse`.  These packages
-include:
+`Tidymodels` consists of several packages, just like `tidyverse`. These
+packages include:
 
-- `rsample` for sample splitting to get train, test and cross-validation data
-- `recipes` for pre-processing
-- `parsnip` for specifying the model
-- `yardstick` for evaluation the model
+-   `rsample` for sample splitting to get train, test and
+    cross-validation data
+-   `recipes` for pre-processing
+-   `parsnip` for specifying the model
+-   `yardstick` for evaluation the model
 
-and there are [many more](https://www.tidymodels.org/packages/).  The suite can be loaded into R.  
-The author will add other packages for tuning parameter, `tune`, and `workflows` for putting it all together.
+and there are [many more](https://www.tidymodels.org/packages/). The
+suite can be loaded into R.\
+The author will add other packages for tuning parameter, `tune`, and
+`workflows` for putting it all together.
 
 ## Setting up the work
 
@@ -78,15 +91,16 @@ pacman::p_load(workflows,
 
 ### The dataset
 
-The data set to use is Pima Indian Women's diabetes.  This dataset is from the National
-Institute of Diabeter, Digestive, and Kidney Diseases.  It contains information on 
-768 indian women from Phoenix, Arizona, USA.
+The data set to use is Pima Indian Women's diabetes. This dataset is
+from the National Institute of Diabeter, Digestive, and Kidney Diseases.
+It contains information on 768 indian women from Phoenix, Arizona, USA.
 
-Interestingly, these indian people are called "Pima" because that is the word they used 
-when interacting with Spaish colinists a lot.  "Pima" is believed to mean "I don't know!"
+Interestingly, these indian people are called "Pima" because that is the
+word they used when interacting with Spaish colinists a lot. "Pima" is
+believed to mean "I don't know!"
 
-The dataset include a number of prediction variables such as number of pregnancies, 
-BMI, age, diabetes pedigree, etc.  
+The dataset include a number of prediction variables such as number of
+pregnancies, BMI, age, diabetes pedigree, etc.
 
 ```{r rename and visualize the dataset}
 data("PimaIndiansDiabetes")
@@ -110,11 +124,12 @@ diabetes_orig %>%
 
 ```
 
-This dataset contains lots of 0's in sections where it is not plausible (BMI for instance.)
-This can be attributed to missing values in the dataset.
+This dataset contains lots of 0's in sections where it is not plausible
+(BMI for instance.) This can be attributed to missing values in the
+dataset.
 
-Let's check the tricep skin fold variable distribution, and the BMI distribution to check
-the shape of the dataset.
+Let's check the tricep skin fold variable distribution, and the BMI
+distribution to check the shape of the dataset.
 
 ```{r checking distibution of variable tricep}
 diabetes_orig %>% 
@@ -123,7 +138,6 @@ diabetes_orig %>%
 
 ```
 
-
 ```{r checking distibution of variable mass}
 diabetes_orig %>% 
   ggplot() +
@@ -131,10 +145,11 @@ diabetes_orig %>%
 
 ```
 
-We can definitely see the values marked as 0, so far from the distribution of data.  It can 
-also be seen in other variables as well.
+We can definitely see the values marked as 0, so far from the
+distribution of data. It can also be seen in other variables as well.
 
-For this we will do a transformation of the dataset so that all 0's become NAs
+For this we will do a transformation of the dataset so that all 0's
+become NAs
 
 ```{r data cleaning replace 0s with NAs}
 diabetes_clean <- diabetes_orig %>% 
@@ -149,19 +164,246 @@ diabetes_clean %>%
   dplyr::slice_sample(n = 10)
 
 ```
-Once our data is hopefully clean, we can now start doing our machine learning analysis.
 
+Now let's check our new clean dataset summary.
 
 ```{r}
 diabetes_clean %>% 
   skim()
 ```
 
-
 ```{r}
 diabetes_clean %>%
   glimpse()
 ```
+
+Once our data is hopefully clean, we can now start doing our machine
+learning analysis with the tidymodels package.
+
+## Tidymodels Process
+
+### Splitting the data: train/test
+
+To do a model we need to separate the dataset into parts: one for
+training the model (or models), one for validating the good model (when
+training on many different models to see which one is best,) and one for
+testing whether the model we validated is actually the good one.
+
+The training data is used to fit our model and tune its parameters, the
+testing data is used to evaluate our final model's performance.
+
+The `rsample` package is used to create these split objects.
+
+```{r creating the training/test split objects}
+set.seed(234589)
+# split the data into training (75%) and testing (25%)
+diabetes_split <- rsample::initial_split(diabetes_clean,
+                                         prop = 3/4)
+
+diabetes_split
+
+```
+
+The training output above is telling us that we have split the set into
+two groups: a. The training set has 576 observations b. The testing set
+has 192 observations c. The last number is the number of observations
+overall: 768
+
+The training and testing sets can be extracted from the split object
+using the corresponding functions `training()`, and `testing()`
+
+```{r get the training and testing data splits separately}
+# extract training and testing sets
+diabetes_train <- training(diabetes_split)
+diabetes_test <- testing(diabetes_split)
+
+```
+
+For parameter tuning, we will need to have various versions of the
+training set. It helps to create a cross-validation version of the
+training set using the `vfold_cv()` function.
+
+```{r creating CV object from training data}
+# creating CV object from training data
+diabetes_cv <- rsample::vfold_cv(diabetes_train)
+
+```
+
+### Defining a recipe
+
+Recipes allows you to specify the formula to apply to the predictor
+variables to build the desire model. It allows you to accommodate or
+revise those variables of that formula prior to the execution of the
+model itself (this is called pre-processing.)
+
+There various pre-processing steps that can be done to our variables.
+Some of them are: normalization, imputation, PCA, etc. There are many
+many pre-processing steps. Their selection will depend on the variables
+we have on our set.
+
+The list of pre-processing steps can be found here: link needed.
+
+The formula usually has the format of outcome = f(predictors).
+
+In our dataset the outcome is to determine whether the patients has
+diabetes based on the observations collected, but more importantly, is
+to determine whether these observations are the indicated ones to
+predict such an outcome, how reliable are they to get a diabetes
+diagnosis.
+
+Creating a recipe then has two parts layered one on top of the other by
+using the pipe.
+
+1.  First we specify the formula using the `recipe()` function, to
+    specify which one is the outcome variable and which variables to use
+    as predictors to create our formula. In this case, we will use them
+    all.
+
+2.  Specify the pre-processing steps to do the the predictor variables.
+    Other cases of pre-processing may be scaling, creating dummy
+    variables, etc.
+
+In this occasion we will do the following:
+
+```{r defining the recipe}
+# define the recipe
+diabetes_recipe <-
+  recipe(diabetes ~ .,                 # the formula outcome is diabetes and the "." is used to state that the rest of the columns will be the predictors.
+  data = diabetes_clean) %>% 
+  step_normalize(all_numeric()) %>%    # pre-processing step to make all predictors numeric
+  step_impute_knn(all_predictors())    # pre-processing step to make impute the knn to all other columns
+
+```
+
+The steps used here to preprocess the data are called "Role selections".
+They specify that we want to apply the step to all numeric variables and
+all predictor variables. Check `?selections` to see other examples.
+
+For detailed information on normalizing data and why it is useful, [please see here](https://machinelearningmastery.com/using-normalization-layers-to-improve-deep-learning-models/).  In short, normalization makes our data centered and scaled.  Centered refers to 
+fact that our data will have a mean of 0 and a standard deviation of 1.  
+
+For detailed information on the Knn (K-nearest neighbor imputation), please [click here.](https://machinelearningmastery.com/knn-imputation-for-missing-values-in-machine-learning/)
+In short, this is used when the dataset has lots of missing values, and we need to 
+impute an estimated numeric value based on the values of nearby observations.
+
+The dataset used to create the recipe was `diabetes_clean`, our working
+full dataset. Any of the other sets: the training, or split object could
+have been used as well.\
+It doesn't matter what is used. All the recipe takes from the data at
+this point is the *names and roles* of the outcome and predictors.  Once
+the recipe is defined, it can then be applied to specific dataset later.
+
+For larger datasets, the head of the data can then be used to pass the recipe
+to smaller dataset to save time and memory.
+
+If we print on the console the diabetes_recipe object, it will only show 
+how many variables we have used as outcome and how many as predictors.  It 
+will also show us the pre-processing steps applied.
+
+```{r show the diabetes_recipe object}
+diabetes_recipe
+
+```
+
+As indicated before, the recipe was a apply to a dataset only to identify which 
+variable is the outcome, which will be used as predictors, and which steps
+are needed to make the predictors ready for analysis.  Now, if we want to 
+apply the recipe to another data set (the training, or testing, etc.) we need
+to use other functions.  
+
+a. `prep()` will apply the recipe to the new dataset
+b. `juice()` will extract the pre-processed data.  Meaning, it will show us how our 
+dataset will look after the application of the recipe steps.
+
+```{r application of the recipe using prep() to the training data, and looking at the pre-processed data with juice()}
+diabetes_train_preprocessed <- 
+  diabetes_recipe %>% 
+  prep(diabetes_train) %>% 
+  juice()                      # This step is optional.
+
+diabetes_train_preprocessed %>% 
+  dplyr::slice_sample(n = 10)
+
+```
+Some considerations.  Extracting the pre-processed data with `juice()` is not necessary
+since the prepped dataset will carry it during the machine learning process.  It is used 
+under the hood.
+
+With this done then, we can now specify which model to use for our machine learning analysis.
+
+### Specifying the model
+
+After splitting the data into training and testing, identifying outcome and predictors and knowing which 
+steps to do pre-process our data, and getting a pre-process dataset for that, now it is time to 
+specify which model will help us get the prediction of diabetes using the predictors indicated.
+
+For that `parsnip` package aids in providing a unified interface for the long list of models available in R.  
+With one way to specify a model, we can then use this specification to generate be it a linear model, a regression model, 
+a random forest model, or support vector machine (SVM), etc.  
+
+The full list of models can be searched in [the tidymodels website.](https://www.tidymodels.org/find/parsnip/)
+
+Some primary components will need to be taken into consideration when specifying a 
+model.  
+
+a. The **model type**, which requires to specify the model we will use, for example, a random forest, or logistic regression, etc.
+b. The **arguments** or parameters to use within the model specified and that are consistent 
+across different models.  Set using `set_args()`
+c. The **engine** or underlying package where the model comes from (e.g. "ranger" for the range implemenation 
+of Random Forest) using the `set_engine()` function.
+d. The **mode** refers to the type of prediction since many packages can do both classification (binary or categorical)
+or regression (continous prediction), set using `set_mode()`
+
+In this notebook,the model type used can be the Random Forest for the purpose of classification.  The argument for this
+will be `mtry` parameter to help us get the number of randomly selected variables to be considered at each split in the trees.
+Then, we we would define the following model specification:
+
+```{r specifying a random forest model}
+rf_model <- 
+  parsnip::rand_forest() %>%                                   # specify that the model is random forest
+  parsnip::set_args(mtry = tune()) %>%                         # specify that the `mtry` parameter needs to be tuned
+  parsnip::set_engine("ranger", importance = "impurity") %>%   # select the engine/package that underlies the model
+  parsnip::set_mode("classification")                          # choose either binary classification or continous regression
+  
+```
+
+For examining the importance of the variables in the final model, we need to add the 
+`importance` argument.  In the "ranger" package the options for this argument are "impurity" an "permutation"
+
+
+For instance, if instead of using a Random Forest model, we would like to specify a Logistic regression model, 
+we could do the following:
+
+```{r specifying a linear regression model}
+lr_model <- 
+  parsnip::logistic_reg() %>%              # specify that the model is linear regression
+  parsnip::set_engine("glm") %>%           # select the engine/packge is "glm".  No set_args() needed
+  parsnip::set_mode("classification")      # choose either binary classification or continous regression
+
+
+```
+
+As can be seen in the last 2 specifications, no dataset has been passed as argument. 
+Which means that we are only building the framework to be applied, not the actual analysis itself.  
+Set in other words, we are not fitting any model yet since no data has been passed on to it.
+Nothing in these models is specific to the diabetes dataset.  
+
+These models could be defined way ahead of time to save time.  
+
+
+This just outlines a description of the model.  Also, setting a parameter to `tune()` means 
+that it will be tuned later so that the parameter that yield the best performance will be chosen.
+
+### Putting it all together: The Workflow
+
+
+
+
+
+
+
+
+
 
 
 
