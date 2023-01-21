@@ -8,4 +8,18 @@ editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website.
+This practice site will be about the `tidymodels` package suite.
+
+I will study following various websites and their corresponding examples.  
+
+The examples are from users other than its authors: from people not connected to the creation nor maintenance of the packages that compose `tidymodels.`
+
+`tidymodels.` is part of the tidyverse suite and it is the creation of [Max Kuhn](https://www.rstudio.com/authors/max-kuhn/), from the package `caret` fame.
+
+Please visit the [tidymodels](https://www.tidymodels.org/) website for a deep and thorough study.
+
+**Content**
+
+-   [Classification with Tidymodels](01_classification-tidymodels.html)
+-   [Cleaning names of columns with `clean_names()`](02_clean-names.html) 
+
