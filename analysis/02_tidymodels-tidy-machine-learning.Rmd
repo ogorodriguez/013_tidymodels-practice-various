@@ -337,7 +337,7 @@ After splitting the data into training and testing, identifying outcome and pred
 steps to do pre-process our data, and getting a pre-process dataset for that, now it is time to 
 specify which model will help us get the prediction of diabetes using the predictors indicated.
 
-For that `parsnip` package aids in providing a unified interface for the long list of models available in R.  
+For that the `parsnip` package aids in providing a unified interface for the long list of models available in R.  
 With one way to specify a model, we can then use this specification to generate be it a linear model, a regression model, 
 a random forest model, or support vector machine (SVM), etc.  
 
@@ -377,26 +377,121 @@ we could do the following:
 ```{r specifying a linear regression model}
 lr_model <- 
   parsnip::logistic_reg() %>%              # specify that the model is linear regression
-  parsnip::set_engine("glm") %>%           # select the engine/packge is "glm".  No set_args() needed
-  parsnip::set_mode("classification")      # choose either binary classification or continous regression
+  parsnip::set_engine("glm") %>%           # select the engine/package is "glm".  No set_args() needed
+  parsnip::set_mode("classification")      # choose either binary classification or continuous regression
 
 
 ```
 
 As can be seen in the last 2 specifications, no dataset has been passed as argument. 
 Which means that we are only building the framework to be applied, not the actual analysis itself.  
-Set in other words, we are not fitting any model yet since no data has been passed on to it.
+In other words, we are not fitting any model yet since no data has been passed on to it.
 Nothing in these models is specific to the diabetes dataset.  
 
-These models could be defined way ahead of time to save time.  
-
+These models could be defined way ahead of time to save time.
 
 This just outlines a description of the model.  Also, setting a parameter to `tune()` means 
 that it will be tuned later so that the parameter that yield the best performance will be chosen.
 
 ## Putting it all together: The Workflow
 
+After having gone through the previous steps, defining the recipes and model, we are 
+now ready to put this into a one workflow. Using the `workflows` package. 
 
+First, the workflow needs to be initiated.  After that we can then pass, or add, 
+the corresponding recipe and model to it.
+
+```{r setting the workflow}
+# setting the workflow for the random forest model
+rf_workflow <- workflows::workflow() %>% 
+  workflows::add_recipe(diabetes_recipe) %>%     # add the recipe
+  workflows::add_model(rf_model)                 # add the model
+
+
+
+```
+
+
+Important to notice that we haven't implemented any pre-processing step in the recipe
+nor have we fit the model to the data yet.  Again we're just writing the framework here.  
+It is only when tuning parameters or actually passing the model to fit that we will be 
+indeed implementing the recipe and model framework defined by the workflow.
+
+If we take a look at the `rf_workflow` object we will see only the structure of such 
+framework.
+
+```{r viewing the workflow framework}
+rf_workflow 
+
+```
+
+### Tuning the parameters
+
+In case we have parameters, these need to be tuned.  Tuning means choosing the value 
+that leads to the best performance of our model.  If our model does not have parameters, 
+this step can be skipped.  
+
+For our Random Forest model, the parameter we chose to tune was mtry.  Mtry helps 
+include a randomness in the choosing of the features to use to create the decission 
+trees of our model.  A big number of features will lead to having the decisions tress 
+look the same, and a very small number may ignore key features that impact our outcome
+variable.  Mtry is explained in very fine detail [in this blog article.](https://crunchingthedata.com/mtry-in-random-forests/)
+
+To obtain the value of mtry that we will use in our model/workflow, we will use 
+the cross-validation dataset `diabetes_cv` we created earlier.  The cross-validation data has 
+lots of versions of our original dataset that we can use to create our trees.
+
+We first specify the values of mtry we want to try.  We have in total 9 features 
+(or variables or columns ) in our dataset.  In this article, the author used three 
+possible numbers for mtry: 3, 4, 5.
+
+Then we will try to get the metrics: [accuracy, and roc_auc](https://medium.com/nerd-for-tech/accuracy-vs-auc-roc-a8e7a384d153).
+
+```{r tuning the mtry parameter}
+rf_grid <- expand.grid(mtry = c(3, 4, 5))             # specify the values of mtry to try
+rf_tune_results <- rf_workflow %>% 
+  tune_grid(resamples = diabetes_cv,                  # The cross-validation object
+            grid = rf_grid,                           # grid with values to try
+            metrics = metric_set(accuracy, roc_auc)   # metrics we care about 
+            )
+
+```
+
+It is a good idea to explore the results of the cross-validation.  
+Using `collect_metrics()` from the `yardstick` package can be used to extract the 
+values of the metrics we input in the tuning phase (accuracy and roc_auc)
+
+```{r print results of the metrics values}
+rf_tune_results %>% 
+  collect_metrics()
+
+```
+
+According to the author, with `mtry = 4` we get the best performance (_just_)
+
+### Finalize the workflow
+
+Now that the mtry parameter has been tuned.  We need to add this into our workflow so
+it chooses the best performing value.  The function `select_best()` will do the tuning 
+for us and select the most performing value.
+
+```{r choosing the best performing value}
+param_final <- rf_tune_results %>% 
+  select_best(metric = "accuracy")
+
+param_final
+
+```
+
+Then we add this final parameter to have our final workflow to use to fit the dataset
+
+```{r finalize the workflow}
+rf_final_workflow <- rf_workflow %>% 
+  finalize_workflow(param_final)
+
+rf_final_workflow
+
+```
 
 
 
