@@ -557,15 +557,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustree3e2cb504f554d41f87ed56981be69800ceaae9c5targetblank3e2cb50a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustree7c15045931b33f08d6c3ea20f4902e76273d208etargetblank7c15045a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/3e2cb504f554d41f87ed56981be69800ceaae9c5" target="_blank">3e2cb50</a>
+<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/7c15045931b33f08d6c3ea20f4902e76273d208e" target="_blank">7c15045</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustree3e2cb504f554d41f87ed56981be69800ceaae9c5targetblank3e2cb50a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustree7c15045931b33f08d6c3ea20f4902e76273d208etargetblank7c15045a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -575,7 +575,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/3e2cb504f554d41f87ed56981be69800ceaae9c5" target="_blank">3e2cb50</a>.
+<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/7c15045931b33f08d6c3ea20f4902e76273d208e" target="_blank">7c15045</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -641,6 +641,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/blob/7c15045931b33f08d6c3ea20f4902e76273d208e/analysis/02_tidymodels-tidy-machine-learning.Rmd" target="_blank">7c15045</a>
+</td>
+<td>
+ogorodriguez
+</td>
+<td>
+2023-01-29
+</td>
+<td>
+Added workflow and parameter tuning section
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/ogorodriguez/013_tidymodels-practice-various/ef73acd82895fff3e2178b463f4a124700030c97/docs/02_tidymodels-tidy-machine-learning.html" target="_blank">ef73acd</a>
+</td>
+<td>
+ogorodriguez
+</td>
+<td>
+2023-01-29
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2004,7 +2038,7 @@ outcome and predictors and knowing which steps to do pre-process our
 data, and getting a pre-process dataset for that, now it is time to
 specify which model will help us get the prediction of diabetes using
 the predictors indicated.</p>
-<p>For that <code>parsnip</code> package aids in providing a unified
+<p>For that the <code>parsnip</code> package aids in providing a unified
 interface for the long list of models available in R.<br />
 With one way to specify a model, we can then use this specification to
 generate be it a linear model, a regression model, a random forest
@@ -2048,14 +2082,14 @@ like to specify a Logistic regression model, we could do the
 following:</p>
 <pre class="r"><code>lr_model &lt;- 
   parsnip::logistic_reg() %&gt;%              # specify that the model is linear regression
-  parsnip::set_engine(&quot;glm&quot;) %&gt;%           # select the engine/packge is &quot;glm&quot;.  No set_args() needed
-  parsnip::set_mode(&quot;classification&quot;)      # choose either binary classification or continous regression</code></pre>
+  parsnip::set_engine(&quot;glm&quot;) %&gt;%           # select the engine/package is &quot;glm&quot;.  No set_args() needed
+  parsnip::set_mode(&quot;classification&quot;)      # choose either binary classification or continuous regression</code></pre>
 <p>As can be seen in the last 2 specifications, no dataset has been
 passed as argument. Which means that we are only building the framework
 to be applied, not the actual analysis itself.<br />
-Set in other words, we are not fitting any model yet since no data has
-been passed on to it. Nothing in these models is specific to the
-diabetes dataset.</p>
+In other words, we are not fitting any model yet since no data has been
+passed on to it. Nothing in these models is specific to the diabetes
+dataset.</p>
 <p>These models could be defined way ahead of time to save time.</p>
 <p>This just outlines a description of the model. Also, setting a
 parameter to <code>tune()</code> means that it will be tuned later so
@@ -2064,6 +2098,133 @@ that the parameter that yield the best performance will be chosen.</p>
 </div>
 <div id="putting-it-all-together-the-workflow" class="section level2">
 <h2>Putting it all together: The Workflow</h2>
+<p>After having gone through the previous steps, defining the recipes
+and model, we are now ready to put this into a one workflow. Using the
+<code>workflows</code> package.</p>
+<p>First, the workflow needs to be initiated. After that we can then
+pass, or add, the corresponding recipe and model to it.</p>
+<pre class="r"><code># setting the workflow for the random forest model
+rf_workflow &lt;- workflows::workflow() %&gt;% 
+  workflows::add_recipe(diabetes_recipe) %&gt;%     # add the recipe
+  workflows::add_model(rf_model)                 # add the model</code></pre>
+<p>Important to notice that we haven’t implemented any pre-processing
+step in the recipe nor have we fit the model to the data yet. Again
+we’re just writing the framework here.<br />
+It is only when tuning parameters or actually passing the model to fit
+that we will be indeed implementing the recipe and model framework
+defined by the workflow.</p>
+<p>If we take a look at the <code>rf_workflow</code> object we will see
+only the structure of such framework.</p>
+<pre class="r"><code>rf_workflow </code></pre>
+<pre><code>══ Workflow ════════════════════════════════════════════════════════════════════
+Preprocessor: Recipe
+Model: rand_forest()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+2 Recipe Steps
+
+• step_normalize()
+• step_impute_knn()
+
+── Model ───────────────────────────────────────────────────────────────────────
+Random Forest Model Specification (classification)
+
+Main Arguments:
+  mtry = tune()
+
+Engine-Specific Arguments:
+  importance = impurity
+
+Computational engine: ranger </code></pre>
+<div id="tuning-the-parameters" class="section level3">
+<h3>Tuning the parameters</h3>
+<p>In case we have parameters, these need to be tuned. Tuning means
+choosing the value that leads to the best performance of our model. If
+our model does not have parameters, this step can be skipped.</p>
+<p>For our Random Forest model, the parameter we chose to tune was mtry.
+Mtry helps include a randomness in the choosing of the features to use
+to create the decission trees of our model. A big number of features
+will lead to having the decisions tress look the same, and a very small
+number may ignore key features that impact our outcome variable. Mtry is
+explained in very fine detail <a
+href="https://crunchingthedata.com/mtry-in-random-forests/">in this blog
+article.</a></p>
+<p>To obtain the value of mtry that we will use in our model/workflow,
+we will use the cross-validation dataset <code>diabetes_cv</code> we
+created earlier. The cross-validation data has lots of versions of our
+original dataset that we can use to create our trees.</p>
+<p>We first specify the values of mtry we want to try. We have in total
+9 features (or variables or columns ) in our dataset. In this article,
+the author used three possible numbers for mtry: 3, 4, 5.</p>
+<p>Then we will try to get the metrics: <a
+href="https://medium.com/nerd-for-tech/accuracy-vs-auc-roc-a8e7a384d153">accuracy,
+and roc_auc</a>.</p>
+<pre class="r"><code>rf_grid &lt;- expand.grid(mtry = c(3, 4, 5))             # specify the values of mtry to try
+rf_tune_results &lt;- rf_workflow %&gt;% 
+  tune_grid(resamples = diabetes_cv,                  # The cross-validation object
+            grid = rf_grid,                           # grid with values to try
+            metrics = metric_set(accuracy, roc_auc)   # metrics we care about 
+            )</code></pre>
+<pre><code>Warning: package &#39;ranger&#39; was built under R version 4.2.2</code></pre>
+<p>It is a good idea to explore the results of the
+cross-validation.<br />
+Using <code>collect_metrics()</code> from the <code>yardstick</code>
+package can be used to extract the values of the metrics we input in the
+tuning phase (accuracy and roc_auc)</p>
+<pre class="r"><code>rf_tune_results %&gt;% 
+  collect_metrics()</code></pre>
+<pre><code># A tibble: 6 × 7
+   mtry .metric  .estimator  mean     n std_err .config             
+  &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+1     3 accuracy binary     0.766    10  0.0128 Preprocessor1_Model1
+2     3 roc_auc  binary     0.841    10  0.0127 Preprocessor1_Model1
+3     4 accuracy binary     0.760    10  0.0128 Preprocessor1_Model2
+4     4 roc_auc  binary     0.843    10  0.0120 Preprocessor1_Model2
+5     5 accuracy binary     0.768    10  0.0127 Preprocessor1_Model3
+6     5 roc_auc  binary     0.838    10  0.0126 Preprocessor1_Model3</code></pre>
+<p>According to the author, with <code>mtry = 4</code> we get the best
+performance (<em>just</em>)</p>
+</div>
+<div id="finalize-the-workflow" class="section level3">
+<h3>Finalize the workflow</h3>
+<p>Now that the mtry parameter has been tuned. We need to add this into
+our workflow so it chooses the best performing value. The function
+<code>select_best()</code> will do the tuning for us and select the most
+performing value.</p>
+<pre class="r"><code>param_final &lt;- rf_tune_results %&gt;% 
+  select_best(metric = &quot;accuracy&quot;)
+
+param_final</code></pre>
+<pre><code># A tibble: 1 × 2
+   mtry .config             
+  &lt;dbl&gt; &lt;chr&gt;               
+1     5 Preprocessor1_Model3</code></pre>
+<p>Then we add this final parameter to have our final workflow to use to
+fit the dataset</p>
+<pre class="r"><code>rf_final_workflow &lt;- rf_workflow %&gt;% 
+  finalize_workflow(param_final)
+
+rf_final_workflow</code></pre>
+<pre><code>══ Workflow ════════════════════════════════════════════════════════════════════
+Preprocessor: Recipe
+Model: rand_forest()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+2 Recipe Steps
+
+• step_normalize()
+• step_impute_knn()
+
+── Model ───────────────────────────────────────────────────────────────────────
+Random Forest Model Specification (classification)
+
+Main Arguments:
+  mtry = 5
+
+Engine-Specific Arguments:
+  importance = impurity
+
+Computational engine: ranger </code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -2088,53 +2249,54 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] mlbench_2.1-3        skimr_2.1.5          yardstick_1.0.0     
- [4] workflowsets_1.0.0   workflows_1.0.0      tune_1.0.0          
- [7] rsample_1.1.0        recipes_1.0.1        parsnip_1.0.1       
-[10] modeldata_1.0.1.9000 infer_1.0.3          dials_1.0.0         
-[13] scales_1.2.1         broom_1.0.1          tidymodels_1.0.0    
-[16] kableExtra_1.3.4     readxl_1.4.1         here_1.0.1          
-[19] janitor_2.1.0        forcats_0.5.2        stringr_1.5.0       
-[22] dplyr_1.0.10         purrr_0.3.4          readr_2.1.2         
-[25] tidyr_1.2.0          tibble_3.1.8         ggplot2_3.3.6       
-[28] tidyverse_1.3.2      workflowr_1.7.0     
+ [1] ranger_0.14.1        mlbench_2.1-3        skimr_2.1.5         
+ [4] yardstick_1.0.0      workflowsets_1.0.0   workflows_1.0.0     
+ [7] tune_1.0.0           rsample_1.1.0        recipes_1.0.1       
+[10] parsnip_1.0.1        modeldata_1.0.1.9000 infer_1.0.3         
+[13] dials_1.0.0          scales_1.2.1         broom_1.0.1         
+[16] tidymodels_1.0.0     kableExtra_1.3.4     readxl_1.4.1        
+[19] here_1.0.1           janitor_2.1.0        forcats_0.5.2       
+[22] stringr_1.5.0        dplyr_1.0.10         purrr_0.3.4         
+[25] readr_2.1.2          tidyr_1.2.0          tibble_3.1.8        
+[28] ggplot2_3.3.6        tidyverse_1.3.2      workflowr_1.7.0     
 
 loaded via a namespace (and not attached):
-  [1] googledrive_2.0.0   colorspace_2.0-3    ellipsis_0.3.2     
-  [4] class_7.3-20        rprojroot_2.0.3     snakecase_0.11.0   
-  [7] base64enc_0.1-3     fs_1.5.2            rstudioapi_0.14    
- [10] farver_2.1.1        furrr_0.3.1         listenv_0.8.0      
- [13] prodlim_2019.11.13  fansi_1.0.3         lubridate_1.9.0    
- [16] xml2_1.3.3          codetools_0.2-18    splines_4.2.1      
- [19] cachem_1.0.6        knitr_1.41          jsonlite_1.8.3     
- [22] dbplyr_2.2.1        compiler_4.2.1      httr_1.4.4         
- [25] backports_1.4.1     assertthat_0.2.1    Matrix_1.4-1       
- [28] fastmap_1.1.0       gargle_1.2.0        cli_3.3.0          
- [31] later_1.3.0         htmltools_0.5.3     tools_4.2.1        
- [34] gtable_0.3.1        glue_1.6.2          Rcpp_1.0.9         
- [37] cellranger_1.1.0    jquerylib_0.1.4     DiceDesign_1.9     
- [40] vctrs_0.5.1         svglite_2.1.0       iterators_1.0.14   
- [43] timeDate_4021.104   xfun_0.35           gower_1.0.0        
- [46] globals_0.16.1      ps_1.7.1            rvest_1.0.3        
- [49] timechange_0.1.1    lifecycle_1.0.3     pacman_0.5.1       
- [52] googlesheets4_1.0.1 future_1.28.0       getPass_0.2-2      
- [55] MASS_7.3-57         ipred_0.9-13        hms_1.1.2          
- [58] promises_1.2.0.1    parallel_4.2.1      yaml_2.3.5         
- [61] sass_0.4.4          rpart_4.1.16        stringi_1.7.8      
- [64] highr_0.9           foreach_1.5.2       lhs_1.1.5          
- [67] hardhat_1.2.0       lava_1.6.10         repr_1.1.4         
- [70] rlang_1.0.6         pkgconfig_2.0.3     systemfonts_1.0.4  
- [73] evaluate_0.18       lattice_0.20-45     labeling_0.4.2     
- [76] processx_3.7.0      tidyselect_1.2.0    parallelly_1.32.1  
- [79] magrittr_2.0.3      R6_2.5.1            generics_0.1.3     
- [82] DBI_1.1.3           pillar_1.8.1        haven_2.5.1        
- [85] whisker_0.4         withr_2.5.0         survival_3.3-1     
- [88] nnet_7.3-17         future.apply_1.9.0  modelr_0.1.9       
- [91] crayon_1.5.2        utf8_1.2.2          tzdb_0.3.0         
- [94] rmarkdown_2.18      grid_4.2.1          callr_3.7.2        
- [97] git2r_0.30.1        reprex_2.0.2        digest_0.6.29      
-[100] webshot_0.5.4       httpuv_1.6.5        GPfit_1.0-8        
-[103] munsell_0.5.0       viridisLite_0.4.1   bslib_0.4.1        </code></pre>
+  [1] backports_1.4.1     systemfonts_1.0.4   repr_1.1.4         
+  [4] splines_4.2.1       listenv_0.8.0       digest_0.6.29      
+  [7] foreach_1.5.2       htmltools_0.5.3     fansi_1.0.3        
+ [10] magrittr_2.0.3      googlesheets4_1.0.1 tzdb_0.3.0         
+ [13] globals_0.16.1      modelr_0.1.9        gower_1.0.0        
+ [16] svglite_2.1.0       hardhat_1.2.0       timechange_0.1.1   
+ [19] colorspace_2.0-3    rvest_1.0.3         haven_2.5.1        
+ [22] xfun_0.35           callr_3.7.2         crayon_1.5.2       
+ [25] jsonlite_1.8.3      survival_3.3-1      iterators_1.0.14   
+ [28] glue_1.6.2          gtable_0.3.1        gargle_1.2.0       
+ [31] ipred_0.9-13        webshot_0.5.4       future.apply_1.9.0 
+ [34] DBI_1.1.3           Rcpp_1.0.9          viridisLite_0.4.1  
+ [37] GPfit_1.0-8         lava_1.6.10         prodlim_2019.11.13 
+ [40] httr_1.4.4          ellipsis_0.3.2      pkgconfig_2.0.3    
+ [43] farver_2.1.1        nnet_7.3-17         sass_0.4.4         
+ [46] dbplyr_2.2.1        utf8_1.2.2          tidyselect_1.2.0   
+ [49] labeling_0.4.2      rlang_1.0.6         DiceDesign_1.9     
+ [52] later_1.3.0         munsell_0.5.0       cellranger_1.1.0   
+ [55] tools_4.2.1         cachem_1.0.6        cli_3.3.0          
+ [58] generics_0.1.3      pacman_0.5.1        evaluate_0.18      
+ [61] fastmap_1.1.0       yaml_2.3.5          processx_3.7.0     
+ [64] knitr_1.41          fs_1.5.2            future_1.28.0      
+ [67] whisker_0.4         xml2_1.3.3          compiler_4.2.1     
+ [70] rstudioapi_0.14     reprex_2.0.2        lhs_1.1.5          
+ [73] bslib_0.4.1         stringi_1.7.8       highr_0.9          
+ [76] ps_1.7.1            lattice_0.20-45     Matrix_1.4-1       
+ [79] vctrs_0.5.1         pillar_1.8.1        lifecycle_1.0.3    
+ [82] furrr_0.3.1         jquerylib_0.1.4     httpuv_1.6.5       
+ [85] R6_2.5.1            promises_1.2.0.1    parallelly_1.32.1  
+ [88] codetools_0.2-18    MASS_7.3-57         assertthat_0.2.1   
+ [91] rprojroot_2.0.3     withr_2.5.0         parallel_4.2.1     
+ [94] hms_1.1.2           grid_4.2.1          rpart_4.1.16       
+ [97] timeDate_4021.104   class_7.3-20        rmarkdown_2.18     
+[100] snakecase_0.11.0    googledrive_2.0.0   git2r_0.30.1       
+[103] getPass_0.2-2       lubridate_1.9.0     base64enc_0.1-3    </code></pre>
+</div>
 </div>
 </div>
 
