@@ -1,5 +1,5 @@
 ---
-title: "02_tidymodels-tidy-machine-learning-R"
+title: "Tidymodels: Tidy Machine Learning in R"
 author: "LJ"
 date: "2023-01-21"
 output: html_document
@@ -394,7 +394,9 @@ These models could be defined way ahead of time to save time.
 This just outlines a description of the model.  Also, setting a parameter to `tune()` means 
 that it will be tuned later so that the parameter that yield the best performance will be chosen.
 
-### Putting it all together: The Workflow
+## Putting it all together: The Workflow
+
+
 
 
 

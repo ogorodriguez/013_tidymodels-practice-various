@@ -23,3 +23,4 @@ Please visit the [tidymodels](https://www.tidymodels.org/) website for a deep an
 -   [Classification with Tidymodels](01_classification-tidymodels.html)
 -   [Tidymodels with Rebecca Barter](02_tidymodels-tidy-machine-learning.html) 
 
+
