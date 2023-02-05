@@ -390,7 +390,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-01-29
+<strong>Last updated:</strong> 2023-02-05
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -557,15 +557,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustree7c15045931b33f08d6c3ea20f4902e76273d208etargetblank7c15045a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustreef3a926520abd3cdb47660c12c683ca1dcf1fde53targetblankf3a9265a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/7c15045931b33f08d6c3ea20f4902e76273d208e" target="_blank">7c15045</a>
+<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/f3a926520abd3cdb47660c12c683ca1dcf1fde53" target="_blank">f3a9265</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustree7c15045931b33f08d6c3ea20f4902e76273d208etargetblank7c15045a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustreef3a926520abd3cdb47660c12c683ca1dcf1fde53targetblankf3a9265a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -575,7 +575,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/7c15045931b33f08d6c3ea20f4902e76273d208e" target="_blank">7c15045</a>.
+<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/f3a926520abd3cdb47660c12c683ca1dcf1fde53" target="_blank">f3a9265</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -641,6 +641,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/blob/f3a926520abd3cdb47660c12c683ca1dcf1fde53/analysis/02_tidymodels-tidy-machine-learning.Rmd" target="_blank">f3a9265</a>
+</td>
+<td>
+ogorodriguez
+</td>
+<td>
+2023-02-05
+</td>
+<td>
+Revised Finalize Workflow section
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/ogorodriguez/013_tidymodels-practice-various/e3649b2626b509915a559918446096ddc7991cc1/docs/02_tidymodels-tidy-machine-learning.html" target="_blank">e3649b2</a>
+</td>
+<td>
+ogorodriguez
+</td>
+<td>
+2023-01-29
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2142,9 +2176,9 @@ Computational engine: ranger </code></pre>
 choosing the value that leads to the best performance of our model. If
 our model does not have parameters, this step can be skipped.</p>
 <p>For our Random Forest model, the parameter we chose to tune was mtry.
-Mtry helps include a randomness in the choosing of the features to use
-to create the decission trees of our model. A big number of features
-will lead to having the decisions tress look the same, and a very small
+Mtry includes a randomness in the choosing of the features to use to
+create the decission trees of our model. A big number of features will
+lead to having the decisions tress look the same, and a very small
 number may ignore key features that impact our outcome variable. Mtry is
 explained in very fine detail <a
 href="https://crunchingthedata.com/mtry-in-random-forests/">in this blog
@@ -2158,14 +2192,13 @@ original dataset that we can use to create our trees.</p>
 the author used three possible numbers for mtry: 3, 4, 5.</p>
 <p>Then we will try to get the metrics: <a
 href="https://medium.com/nerd-for-tech/accuracy-vs-auc-roc-a8e7a384d153">accuracy,
-and roc_auc</a>.</p>
+and roc_auc, explained via this link</a>.</p>
 <pre class="r"><code>rf_grid &lt;- expand.grid(mtry = c(3, 4, 5))             # specify the values of mtry to try
 rf_tune_results &lt;- rf_workflow %&gt;% 
   tune_grid(resamples = diabetes_cv,                  # The cross-validation object
             grid = rf_grid,                           # grid with values to try
             metrics = metric_set(accuracy, roc_auc)   # metrics we care about 
             )</code></pre>
-<pre><code>Warning: package &#39;ranger&#39; was built under R version 4.2.2</code></pre>
 <p>It is a good idea to explore the results of the
 cross-validation.<br />
 Using <code>collect_metrics()</code> from the <code>yardstick</code>
