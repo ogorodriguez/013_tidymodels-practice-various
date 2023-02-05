@@ -279,41 +279,49 @@ The steps used here to preprocess the data are called "Role selections".
 They specify that we want to apply the step to all numeric variables and
 all predictor variables. Check `?selections` to see other examples.
 
-For detailed information on normalizing data and why it is useful, [please see here](https://machinelearningmastery.com/using-normalization-layers-to-improve-deep-learning-models/).  In short, normalization makes our data centered and scaled.  Centered refers to 
-fact that our data will have a mean of 0 and a standard deviation of 1.  
+For detailed information on normalizing data and why it is useful,
+[please see
+here](https://machinelearningmastery.com/using-normalization-layers-to-improve-deep-learning-models/).
+In short, normalization makes our data centered and scaled. Centered
+refers to fact that our data will have a mean of 0 and a standard
+deviation of 1.
 
-For detailed information on the Knn (K-nearest neighbor imputation), please [click here.](https://machinelearningmastery.com/knn-imputation-for-missing-values-in-machine-learning/)
-In short, this is used when the dataset has lots of missing values, and we need to 
-impute an estimated numeric value based on the values of nearby observations.
+For detailed information on the Knn (K-nearest neighbor imputation),
+please [click
+here.](https://machinelearningmastery.com/knn-imputation-for-missing-values-in-machine-learning/)
+In short, this is used when the dataset has lots of missing values, and
+we need to impute an estimated numeric value based on the values of
+nearby observations.
 
 The dataset used to create the recipe was `diabetes_clean`, our working
 full dataset. Any of the other sets: the training, or split object could
 have been used as well.\
 It doesn't matter what is used. All the recipe takes from the data at
-this point is the *names and roles* of the outcome and predictors.  Once
+this point is the *names and roles* of the outcome and predictors. Once
 the recipe is defined, it can then be applied to specific dataset later.
 
-For larger datasets, the head of the data can then be used to pass the recipe
-to smaller dataset to save time and memory.
+For larger datasets, the head of the data can then be used to pass the
+recipe to smaller dataset to save time and memory.
 
-If we print on the console the diabetes_recipe object, it will only show 
-how many variables we have used as outcome and how many as predictors.  It 
-will also show us the pre-processing steps applied.
+If we print on the console the diabetes_recipe object, it will only show
+how many variables we have used as outcome and how many as predictors.
+It will also show us the pre-processing steps applied.
 
 ```{r show the diabetes_recipe object}
 diabetes_recipe
 
 ```
 
-As indicated before, the recipe was a apply to a dataset only to identify which 
-variable is the outcome, which will be used as predictors, and which steps
-are needed to make the predictors ready for analysis.  Now, if we want to 
-apply the recipe to another data set (the training, or testing, etc.) we need
-to use other functions.  
+As indicated before, the recipe was a apply to a dataset only to
+identify which variable is the outcome, which will be used as
+predictors, and which steps are needed to make the predictors ready for
+analysis. Now, if we want to apply the recipe to another data set (the
+training, or testing, etc.) we need to use other functions.
 
-a. `prep()` will apply the recipe to the new dataset
-b. `juice()` will extract the pre-processed data.  Meaning, it will show us how our 
-dataset will look after the application of the recipe steps.
+a.  `prep()` will apply the recipe to the new dataset
+b.  `juice()` will extract the pre-processed data. Meaning, it will show
+    us how our dataset will look after the application of the recipe
+    steps.
 
 ```{r application of the recipe using prep() to the training data, and looking at the pre-processed data with juice()}
 diabetes_train_preprocessed <- 
@@ -325,38 +333,51 @@ diabetes_train_preprocessed %>%
   dplyr::slice_sample(n = 10)
 
 ```
-Some considerations.  Extracting the pre-processed data with `juice()` is not necessary
-since the prepped dataset will carry it during the machine learning process.  It is used 
-under the hood.
 
-With this done then, we can now specify which model to use for our machine learning analysis.
+Some considerations. Extracting the pre-processed data with `juice()` is
+not necessary since the prepped dataset will carry it during the machine
+learning process. It is used under the hood.
+
+With this done then, we can now specify which model to use for our
+machine learning analysis.
 
 ### Specifying the model
 
-After splitting the data into training and testing, identifying outcome and predictors and knowing which 
-steps to do pre-process our data, and getting a pre-process dataset for that, now it is time to 
-specify which model will help us get the prediction of diabetes using the predictors indicated.
+After splitting the data into training and testing, identifying outcome
+and predictors and knowing which steps to do pre-process our data, and
+getting a pre-process dataset for that, now it is time to specify which
+model will help us get the prediction of diabetes using the predictors
+indicated.
 
-For that the `parsnip` package aids in providing a unified interface for the long list of models available in R.  
-With one way to specify a model, we can then use this specification to generate be it a linear model, a regression model, 
-a random forest model, or support vector machine (SVM), etc.  
+For that the `parsnip` package aids in providing a unified interface for
+the long list of models available in R.\
+With one way to specify a model, we can then use this specification to
+generate be it a linear model, a regression model, a random forest
+model, or support vector machine (SVM), etc.
 
-The full list of models can be searched in [the tidymodels website.](https://www.tidymodels.org/find/parsnip/)
+The full list of models can be searched in [the tidymodels
+website.](https://www.tidymodels.org/find/parsnip/)
 
-Some primary components will need to be taken into consideration when specifying a 
-model.  
+Some primary components will need to be taken into consideration when
+specifying a model.
 
-a. The **model type**, which requires to specify the model we will use, for example, a random forest, or logistic regression, etc.
-b. The **arguments** or parameters to use within the model specified and that are consistent 
-across different models.  Set using `set_args()`
-c. The **engine** or underlying package where the model comes from (e.g. "ranger" for the range implemenation 
-of Random Forest) using the `set_engine()` function.
-d. The **mode** refers to the type of prediction since many packages can do both classification (binary or categorical)
-or regression (continous prediction), set using `set_mode()`
+a.  The **model type**, which requires to specify the model we will use,
+    for example, a random forest, or logistic regression, etc.
+b.  The **arguments** or parameters to use within the model specified
+    and that are consistent across different models. Set using
+    `set_args()`
+c.  The **engine** or underlying package where the model comes from
+    (e.g. "ranger" for the range implemenation of Random Forest) using
+    the `set_engine()` function.
+d.  The **mode** refers to the type of prediction since many packages
+    can do both classification (binary or categorical) or regression
+    (continous prediction), set using `set_mode()`
 
-In this notebook,the model type used can be the Random Forest for the purpose of classification.  The argument for this
-will be `mtry` parameter to help us get the number of randomly selected variables to be considered at each split in the trees.
-Then, we we would define the following model specification:
+In this notebook,the model type used can be the Random Forest for the
+purpose of classification. The argument for this will be `mtry`
+parameter to help us get the number of randomly selected variables to be
+considered at each split in the trees. Then, we we would define the
+following model specification:
 
 ```{r specifying a random forest model}
 rf_model <- 
@@ -367,12 +388,12 @@ rf_model <-
   
 ```
 
-For examining the importance of the variables in the final model, we need to add the 
-`importance` argument.  In the "ranger" package the options for this argument are "impurity" an "permutation"
+For examining the importance of the variables in the final model, we
+need to add the `importance` argument. In the "ranger" package the
+options for this argument are "impurity" an "permutation"
 
-
-For instance, if instead of using a Random Forest model, we would like to specify a Logistic regression model, 
-we could do the following:
+For instance, if instead of using a Random Forest model, we would like
+to specify a Logistic regression model, we could do the following:
 
 ```{r specifying a linear regression model}
 lr_model <- 
@@ -383,23 +404,27 @@ lr_model <-
 
 ```
 
-As can be seen in the last 2 specifications, no dataset has been passed as argument. 
-Which means that we are only building the framework to be applied, not the actual analysis itself.  
-In other words, we are not fitting any model yet since no data has been passed on to it.
-Nothing in these models is specific to the diabetes dataset.  
+As can be seen in the last 2 specifications, no dataset has been passed
+as argument. Which means that we are only building the framework to be
+applied, not the actual analysis itself.\
+In other words, we are not fitting any model yet since no data has been
+passed on to it. Nothing in these models is specific to the diabetes
+dataset.
 
 These models could be defined way ahead of time to save time.
 
-This just outlines a description of the model.  Also, setting a parameter to `tune()` means 
-that it will be tuned later so that the parameter that yield the best performance will be chosen.
+This just outlines a description of the model. Also, setting a parameter
+to `tune()` means that it will be tuned later so that the parameter that
+yield the best performance will be chosen.
 
 ## Putting it all together: The Workflow
 
-After having gone through the previous steps, defining the recipes and model, we are 
-now ready to put this into a one workflow. Using the `workflows` package. 
+After having gone through the previous steps, defining the recipes and
+model, we are now ready to put this into a one workflow. Using the
+`workflows` package.
 
-First, the workflow needs to be initiated.  After that we can then pass, or add, 
-the corresponding recipe and model to it.
+First, the workflow needs to be initiated. After that we can then pass,
+or add, the corresponding recipe and model to it.
 
 ```{r setting the workflow}
 # setting the workflow for the random forest model
@@ -411,14 +436,15 @@ rf_workflow <- workflows::workflow() %>%
 
 ```
 
+Important to notice that we haven't implemented any pre-processing step
+in the recipe nor have we fit the model to the data yet. Again we're
+just writing the framework here.\
+It is only when tuning parameters or actually passing the model to fit
+that we will be indeed implementing the recipe and model framework
+defined by the workflow.
 
-Important to notice that we haven't implemented any pre-processing step in the recipe
-nor have we fit the model to the data yet.  Again we're just writing the framework here.  
-It is only when tuning parameters or actually passing the model to fit that we will be 
-indeed implementing the recipe and model framework defined by the workflow.
-
-If we take a look at the `rf_workflow` object we will see only the structure of such 
-framework.
+If we take a look at the `rf_workflow` object we will see only the
+structure of such framework.
 
 ```{r viewing the workflow framework}
 rf_workflow 
@@ -427,25 +453,30 @@ rf_workflow
 
 ### Tuning the parameters
 
-In case we have parameters, these need to be tuned.  Tuning means choosing the value 
-that leads to the best performance of our model.  If our model does not have parameters, 
-this step can be skipped.  
+In case we have parameters, these need to be tuned. Tuning means
+choosing the value that leads to the best performance of our model. If
+our model does not have parameters, this step can be skipped.
 
-For our Random Forest model, the parameter we chose to tune was mtry.  Mtry 
-includes a randomness in the choosing of the features to use to create the decission 
-trees of our model.  A big number of features will lead to having the decisions tress 
-look the same, and a very small number may ignore key features that impact our outcome
-variable.  Mtry is explained in very fine detail [in this blog article.](https://crunchingthedata.com/mtry-in-random-forests/)
+For our Random Forest model, the parameter we chose to tune was mtry.
+Mtry includes a randomness in the choosing of the features to use to
+create the decission trees of our model. A big number of features will
+lead to having the decisions tress look the same, and a very small
+number may ignore key features that impact our outcome variable. Mtry is
+explained in very fine detail [in this blog
+article.](https://crunchingthedata.com/mtry-in-random-forests/)
 
-To obtain the value of mtry that we will use in our model/workflow, we will use 
-the cross-validation dataset `diabetes_cv` we created earlier.  The cross-validation data has 
-lots of versions of our original dataset that we can use to create our trees.
+To obtain the value of mtry that we will use in our model/workflow, we
+will use the cross-validation dataset `diabetes_cv` we created earlier.
+The cross-validation data has lots of versions of our original dataset
+that we can use to create our trees.
 
-We first specify the values of mtry we want to try.  We have in total 9 features 
-(or variables or columns ) in our dataset.  In this article, the author used three 
-possible numbers for mtry: 3, 4, 5.
+We first specify the values of mtry we want to try. We have in total 9
+features (or variables or columns ) in our dataset. In this article, the
+author used three possible numbers for mtry: 3, 4, 5.
 
-Then we will try to get the metrics: [accuracy, and roc_auc, explained via this link](https://medium.com/nerd-for-tech/accuracy-vs-auc-roc-a8e7a384d153).
+Then we will try to get the metrics: [accuracy, and roc_auc, explained
+via this
+link](https://medium.com/nerd-for-tech/accuracy-vs-auc-roc-a8e7a384d153).
 
 ```{r tuning the mtry parameter, warning = FALSE}
 rf_grid <- expand.grid(mtry = c(3, 4, 5))             # specify the values of mtry to try
@@ -457,9 +488,10 @@ rf_tune_results <- rf_workflow %>%
 
 ```
 
-It is a good idea to explore the results of the cross-validation.  
-Using `collect_metrics()` from the `yardstick` package can be used to extract the 
-values of the metrics we input in the tuning phase (accuracy and roc_auc)
+It is a good idea to explore the results of the cross-validation.\
+Using `collect_metrics()` from the `yardstick` package can be used to
+extract the values of the metrics we input in the tuning phase (accuracy
+and roc_auc)
 
 ```{r print results of the metrics values}
 rf_tune_results %>% 
@@ -467,13 +499,15 @@ rf_tune_results %>%
 
 ```
 
-According to the author, with `mtry = 4` we get the best performance (_just_)
+According to the author, with `mtry = 4` we get the best performance
+(*just*)
 
 ### Finalize the workflow
 
-Now that the mtry parameter has been tuned.  We need to add this into our workflow so
-it chooses the best performing value.  The function `select_best()` will do the tuning 
-for us and select the most performing value.
+Now that the mtry parameter has been tuned. We need to add this into our
+workflow so it chooses the best performing value. The function
+`select_best()` will do the tuning for us and select the most performing
+value.
 
 ```{r choosing the best performing value}
 param_final <- rf_tune_results %>% 
@@ -483,7 +517,8 @@ param_final
 
 ```
 
-Then we add this final parameter to have our final workflow to use to fit the dataset
+Then we add this final parameter to have our final workflow to use to
+fit the dataset
 
 ```{r finalize the workflow}
 rf_final_workflow <- rf_workflow %>% 
@@ -492,6 +527,161 @@ rf_final_workflow <- rf_workflow %>%
 rf_final_workflow
 
 ```
+
+## Evaluate the model on the test set
+
+Once the recipe is defined, the model selected, and its parameters are
+tuned, now we are ready to fit the final model.
+
+Since all of the information is contained in the workflow object (the
+final Random Forest workflow object `rf_final_workflow`) we will apply
+the funcion `last_fit()` to that workflow and to our train/test split
+object.
+
+This will automatically train the model specified by the workflow using
+the training data, and product the evaluations based on the dataset. The
+function will know which dataset to use. Genius.
+
+```{r fitting the training set and evaluate on the test set}
+rf_fit <- rf_final_workflow %>% 
+  last_fit(diabetes_split)       # fit on the training set and evaluate on the test set
+
+rf_fit
+
+```
+
+The result above is a tibble with list columns. It can be worked using
+`purrr`, since it is a data frame.
+
+For example, let's extract the information in the metrics column. We
+will use `dplyr::pull()`
+
+```{r extract metrics column from fit object}
+rf_fit %>% 
+  dplyr::pull(.metrics)
+
+```
+
+```{r extract predictions column from fit object}
+rf_fit %>% 
+  dplyr::pull(.predictions)
+
+```
+
+
+### Extracting information from the fit model
+
+However, there are functions within `tidymodels` to collect this. For
+examples, we can callect the metrics using `collect_metrics()`. This
+will extract the metrics calculated on the test set.
+
+```{r using collect_metrics()}
+test_performance <- rf_fit %>% 
+  collect_metrics()
+
+test_performance
+
+```
+
+The values for accuracy (0.78) and ROC_AUC (0.85) can be considered as
+very good.
+
+We can also get the predictions using `collect_predictions()`
+
+```{r using collect_predictions}
+test_predictions <- rf_fit %>% 
+  collect_predictions()
+
+test_predictions
+
+```
+
+The dimensions of the test_predictions table indicates 192 observations,
+which is the number of observations of our test set.  
+(`r nrow(diabetes_test)`)
+
+Also, test_predictions is a data frame and we can do all sorts of calculations with it.
+
+### Getting a confusion matrix
+
+To create a confusion matrix we can use the function `conf_mat()`
+
+```{r generate a confusion matrix}
+test_predictions %>% 
+  yardstick::conf_mat(truth = diabetes,
+                      estimate = .pred_class)
+
+```
+
+### ROC_AUC Curve
+
+To build a ROC_AUC, we can autoplot from yardstick.  We need to pick a truth column 
+which is a factor, and one probability with the numbers that calculates our prediction. 
+
+In our model we choose the .pred_neg column since it is the first one available in our 
+set for left to right.  
+
+```{r}
+ autoplot(roc_curve(test_predictions,
+                    diabetes, 
+                    .pred_neg))
+```
+
+## Using the model
+
+The purpose of creating a model that has good prediction performance is to use on 
+new data.  
+
+For that, we will need to create one final model that we will call `final_model` 
+using our full diabetes data set (the clean version.)  The function to use is 
+`fit()`
+
+With that model, then we can use new data to get predictions.
+
+```{r fitting the final model}
+final_model <- fit(rf_final_workflow,
+                   diabetes_clean)
+
+final_model
+
+```
+
+### Predicting on new data
+
+If we wanted to predict the diabetes status on a new woman, we can use the `predict()` 
+function from the stats package.
+
+```{r create the new woman dataset}
+new_woman <- tribble(~pregnant, ~glucose, ~pressure, ~triceps, ~insulin, ~mass, ~pedigree, ~age,
+                     2, 95, 70, 31, 102, 28.2, 0.67, 47)
+
+new_woman
+
+```
+
+And now let's predict the result
+
+```{r predict status on new woman}
+final_model %>% 
+  predict(new_data = new_woman)
+
+```
+
+The predicted diabetes status of this new woman is "negative".
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
