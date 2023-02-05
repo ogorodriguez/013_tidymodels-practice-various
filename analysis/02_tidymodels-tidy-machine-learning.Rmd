@@ -431,8 +431,8 @@ In case we have parameters, these need to be tuned.  Tuning means choosing the v
 that leads to the best performance of our model.  If our model does not have parameters, 
 this step can be skipped.  
 
-For our Random Forest model, the parameter we chose to tune was mtry.  Mtry helps 
-include a randomness in the choosing of the features to use to create the decission 
+For our Random Forest model, the parameter we chose to tune was mtry.  Mtry 
+includes a randomness in the choosing of the features to use to create the decission 
 trees of our model.  A big number of features will lead to having the decisions tress 
 look the same, and a very small number may ignore key features that impact our outcome
 variable.  Mtry is explained in very fine detail [in this blog article.](https://crunchingthedata.com/mtry-in-random-forests/)
@@ -445,9 +445,9 @@ We first specify the values of mtry we want to try.  We have in total 9 features
 (or variables or columns ) in our dataset.  In this article, the author used three 
 possible numbers for mtry: 3, 4, 5.
 
-Then we will try to get the metrics: [accuracy, and roc_auc](https://medium.com/nerd-for-tech/accuracy-vs-auc-roc-a8e7a384d153).
+Then we will try to get the metrics: [accuracy, and roc_auc, explained via this link](https://medium.com/nerd-for-tech/accuracy-vs-auc-roc-a8e7a384d153).
 
-```{r tuning the mtry parameter}
+```{r tuning the mtry parameter, warning = FALSE}
 rf_grid <- expand.grid(mtry = c(3, 4, 5))             # specify the values of mtry to try
 rf_tune_results <- rf_workflow %>% 
   tune_grid(resamples = diabetes_cv,                  # The cross-validation object
