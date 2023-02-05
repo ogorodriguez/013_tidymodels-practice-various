@@ -390,7 +390,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-02-05
+<strong>Last updated:</strong> 2023-02-06
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -557,15 +557,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustreef3a926520abd3cdb47660c12c683ca1dcf1fde53targetblankf3a9265a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustreeac0bba0a7bd985e14c13d6832727df3455303c13targetblankac0bba0a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/f3a926520abd3cdb47660c12c683ca1dcf1fde53" target="_blank">f3a9265</a>
+<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/ac0bba0a7bd985e14c13d6832727df3455303c13" target="_blank">ac0bba0</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustreef3a926520abd3cdb47660c12c683ca1dcf1fde53targetblankf3a9265a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomogorodriguez013tidymodelspracticevarioustreeac0bba0a7bd985e14c13d6832727df3455303c13targetblankac0bba0a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -575,7 +575,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/f3a926520abd3cdb47660c12c683ca1dcf1fde53" target="_blank">f3a9265</a>.
+<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/tree/ac0bba0a7bd985e14c13d6832727df3455303c13" target="_blank">ac0bba0</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -595,6 +595,9 @@ Ignored files:
     Ignored:    analysis/01_classification-tidymodels.nb.html
     Ignored:    analysis/01_classification-tidymodels_cache/
     Ignored:    analysis/02_tidymodels-tidy-machine-learning_cache/
+
+Unstaged changes:
+    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -641,6 +644,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/ogorodriguez/013_tidymodels-practice-various/blob/ac0bba0a7bd985e14c13d6832727df3455303c13/analysis/02_tidymodels-tidy-machine-learning.Rmd" target="_blank">ac0bba0</a>
+</td>
+<td>
+ogorodriguez
+</td>
+<td>
+2023-02-06
+</td>
+<td>
+Added the Evaluate and Using model sections
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/ogorodriguez/013_tidymodels-practice-various/b305812d3ee58e6e06cd187e3b65603df7c6adb0/docs/02_tidymodels-tidy-machine-learning.html" target="_blank">b305812</a>
+</td>
+<td>
+ogorodriguez
+</td>
+<td>
+2023-02-05
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2258,6 +2295,184 @@ Engine-Specific Arguments:
   importance = impurity
 
 Computational engine: ranger </code></pre>
+</div>
+</div>
+<div id="evaluate-the-model-on-the-test-set" class="section level2">
+<h2>Evaluate the model on the test set</h2>
+<p>Once the recipe is defined, the model selected, and its parameters
+are tuned, now we are ready to fit the final model.</p>
+<p>Since all of the information is contained in the workflow object (the
+final Random Forest workflow object <code>rf_final_workflow</code>) we
+will apply the funcion <code>last_fit()</code> to that workflow and to
+our train/test split object.</p>
+<p>This will automatically train the model specified by the workflow
+using the training data, and product the evaluations based on the
+dataset. The function will know which dataset to use. Genius.</p>
+<pre class="r"><code>rf_fit &lt;- rf_final_workflow %&gt;% 
+  last_fit(diabetes_split)       # fit on the training set and evaluate on the test set
+
+rf_fit</code></pre>
+<pre><code># Resampling results
+# Manual resampling 
+# A tibble: 1 × 6
+  splits            id               .metrics .notes   .predictions .workflow 
+  &lt;list&gt;            &lt;chr&gt;            &lt;list&gt;   &lt;list&gt;   &lt;list&gt;       &lt;list&gt;    
+1 &lt;split [576/192]&gt; train/test split &lt;tibble&gt; &lt;tibble&gt; &lt;tibble&gt;     &lt;workflow&gt;</code></pre>
+<p>The result above is a tibble with list columns. It can be worked
+using <code>purrr</code>, since it is a data frame.</p>
+<p>For example, let’s extract the information in the metrics column. We
+will use <code>dplyr::pull()</code></p>
+<pre class="r"><code>rf_fit %&gt;% 
+  dplyr::pull(.metrics)</code></pre>
+<pre><code>[[1]]
+# A tibble: 2 × 4
+  .metric  .estimator .estimate .config             
+  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 accuracy binary         0.776 Preprocessor1_Model1
+2 roc_auc  binary         0.845 Preprocessor1_Model1</code></pre>
+<pre class="r"><code>rf_fit %&gt;% 
+  dplyr::pull(.predictions)</code></pre>
+<pre><code>[[1]]
+# A tibble: 192 × 6
+   .pred_neg .pred_pos  .row .pred_class diabetes .config             
+       &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;    &lt;chr&gt;               
+ 1     0.361    0.639      3 pos         pos      Preprocessor1_Model1
+ 2     0.184    0.816      9 pos         pos      Preprocessor1_Model1
+ 3     0.781    0.219     11 neg         neg      Preprocessor1_Model1
+ 4     0.497    0.503     13 pos         neg      Preprocessor1_Model1
+ 5     0.597    0.403     18 neg         pos      Preprocessor1_Model1
+ 6     0.339    0.661     26 pos         pos      Preprocessor1_Model1
+ 7     0.173    0.827     32 pos         pos      Preprocessor1_Model1
+ 8     0.664    0.336     50 neg         neg      Preprocessor1_Model1
+ 9     0.960    0.0399    53 neg         neg      Preprocessor1_Model1
+10     0.189    0.811     55 pos         neg      Preprocessor1_Model1
+# … with 182 more rows</code></pre>
+<div id="extracting-information-from-the-fit-model"
+class="section level3">
+<h3>Extracting information from the fit model</h3>
+<p>However, there are functions within <code>tidymodels</code> to
+collect this. For examples, we can callect the metrics using
+<code>collect_metrics()</code>. This will extract the metrics calculated
+on the test set.</p>
+<pre class="r"><code>test_performance &lt;- rf_fit %&gt;% 
+  collect_metrics()
+
+test_performance</code></pre>
+<pre><code># A tibble: 2 × 4
+  .metric  .estimator .estimate .config             
+  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 accuracy binary         0.776 Preprocessor1_Model1
+2 roc_auc  binary         0.845 Preprocessor1_Model1</code></pre>
+<p>The values for accuracy (0.78) and ROC_AUC (0.85) can be considered
+as very good.</p>
+<p>We can also get the predictions using
+<code>collect_predictions()</code></p>
+<pre class="r"><code>test_predictions &lt;- rf_fit %&gt;% 
+  collect_predictions()
+
+test_predictions</code></pre>
+<pre><code># A tibble: 192 × 7
+   id               .pred_neg .pred_pos  .row .pred_class diabetes .config      
+   &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;    &lt;chr&gt;        
+ 1 train/test split     0.361    0.639      3 pos         pos      Preprocessor…
+ 2 train/test split     0.184    0.816      9 pos         pos      Preprocessor…
+ 3 train/test split     0.781    0.219     11 neg         neg      Preprocessor…
+ 4 train/test split     0.497    0.503     13 pos         neg      Preprocessor…
+ 5 train/test split     0.597    0.403     18 neg         pos      Preprocessor…
+ 6 train/test split     0.339    0.661     26 pos         pos      Preprocessor…
+ 7 train/test split     0.173    0.827     32 pos         pos      Preprocessor…
+ 8 train/test split     0.664    0.336     50 neg         neg      Preprocessor…
+ 9 train/test split     0.960    0.0399    53 neg         neg      Preprocessor…
+10 train/test split     0.189    0.811     55 pos         neg      Preprocessor…
+# … with 182 more rows</code></pre>
+<p>The dimensions of the test_predictions table indicates 192
+observations, which is the number of observations of our test set.<br />
+(192)</p>
+<p>Also, test_predictions is a data frame and we can do all sorts of
+calculations with it.</p>
+</div>
+<div id="getting-a-confusion-matrix" class="section level3">
+<h3>Getting a confusion matrix</h3>
+<p>To create a confusion matrix we can use the function
+<code>conf_mat()</code></p>
+<pre class="r"><code>test_predictions %&gt;% 
+  yardstick::conf_mat(truth = diabetes,
+                      estimate = .pred_class)</code></pre>
+<pre><code>          Truth
+Prediction neg pos
+       neg 106  19
+       pos  24  43</code></pre>
+</div>
+<div id="roc_auc-curve" class="section level3">
+<h3>ROC_AUC Curve</h3>
+<p>To build a ROC_AUC, we can autoplot from yardstick. We need to pick a
+truth column which is a factor, and one probability with the numbers
+that calculates our prediction.</p>
+<p>In our model we choose the .pred_neg column since it is the first one
+available in our set for left to right.</p>
+<pre class="r"><code> autoplot(roc_curve(test_predictions,
+                    diabetes, 
+                    .pred_neg))</code></pre>
+<p><img src="figure/02_tidymodels-tidy-machine-learning.Rmd/unnamed-chunk-3-1.png" width="1440" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="using-the-model" class="section level2">
+<h2>Using the model</h2>
+<p>The purpose of creating a model that has good prediction performance
+is to use on new data.</p>
+<p>For that, we will need to create one final model that we will call
+<code>final_model</code> using our full diabetes data set (the clean
+version.) The function to use is <code>fit()</code></p>
+<p>With that model, then we can use new data to get predictions.</p>
+<pre class="r"><code>final_model &lt;- fit(rf_final_workflow,
+                   diabetes_clean)
+
+final_model</code></pre>
+<pre><code>══ Workflow [trained] ══════════════════════════════════════════════════════════
+Preprocessor: Recipe
+Model: rand_forest()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+2 Recipe Steps
+
+• step_normalize()
+• step_impute_knn()
+
+── Model ───────────────────────────────────────────────────────────────────────
+Ranger result
+
+Call:
+ ranger::ranger(x = maybe_data_frame(x), y = y, mtry = min_cols(~5,      x), importance = ~&quot;impurity&quot;, num.threads = 1, verbose = FALSE,      seed = sample.int(10^5, 1), probability = TRUE) 
+
+Type:                             Probability estimation 
+Number of trees:                  500 
+Sample size:                      768 
+Number of independent variables:  8 
+Mtry:                             5 
+Target node size:                 10 
+Variable importance mode:         impurity 
+Splitrule:                        gini 
+OOB prediction error (Brier s.):  0.158586 </code></pre>
+<div id="predicting-on-new-data" class="section level3">
+<h3>Predicting on new data</h3>
+<p>If we wanted to predict the diabetes status on a new woman, we can
+use the <code>predict()</code> function from the stats package.</p>
+<pre class="r"><code>new_woman &lt;- tribble(~pregnant, ~glucose, ~pressure, ~triceps, ~insulin, ~mass, ~pedigree, ~age,
+                     2, 95, 70, 31, 102, 28.2, 0.67, 47)
+
+new_woman</code></pre>
+<pre><code># A tibble: 1 × 8
+  pregnant glucose pressure triceps insulin  mass pedigree   age
+     &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+1        2      95       70      31     102  28.2     0.67    47</code></pre>
+<p>And now let’s predict the result</p>
+<pre class="r"><code>final_model %&gt;% 
+  predict(new_data = new_woman)</code></pre>
+<pre><code># A tibble: 1 × 1
+  .pred_class
+  &lt;fct&gt;      
+1 neg        </code></pre>
+<p>The predicted diabetes status of this new woman is “negative”.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
