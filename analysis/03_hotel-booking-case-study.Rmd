@@ -34,21 +34,27 @@ ggplot2::theme_set(theme_minimal())
 
 ## Introduction
 
-This notebook will reproduce the case study available in the 
-`tidymodels` website, called ["A predictive modeling case study"](https://www.tidymodels.org/start/case-study/)
-using a [version of the data set](https://gist.github.com/topepo/05a74916c343e57a71c51d6bc32a21ce) called Hotel Booking 
-from a study conducted by [Antonio, Almeida, and Nunes (2019)](https://doi.org/10.1016/j.dib.2018.11.126)
+This notebook will reproduce the case study available in the
+`tidymodels` website, called ["A predictive modeling case
+study"](https://www.tidymodels.org/start/case-study/) using a [version
+of the data
+set](https://gist.github.com/topepo/05a74916c343e57a71c51d6bc32a21ce)
+called Hotel Booking from a study conducted by [Antonio, Almeida, and
+Nunes (2019)](https://doi.org/10.1016/j.dib.2018.11.126)
 
-In this study, all of the steps for creating a predictive model are used.  This section is the last of 
-the [Getting Started](https://www.tidymodels.org/start/) part of the `tidymodels` website.  The previous sections covered one step of the
-predictive model creation separately and in detail.  
+In this study, all of the steps for creating a predictive model are
+used. This section is the last of the [Getting
+Started](https://www.tidymodels.org/start/) part of the `tidymodels`
+website. The previous sections covered one step of the predictive model
+creation separately and in detail.
 
-I will attempt to follow the example here since I have a hard time not seeing the whole process holistically.
-
+I will attempt to follow the example here since I have a hard time not
+seeing the whole process holistically.
 
 ## Loading the data
 
-To read the data into R we will use the `readr::read_csv()` to creat a copy in my repository.
+To read the data into R we will use the `readr::read_csv()` to creat a
+copy in my repository.
 
 ```{r reding the hotel data into R as csv}
 # read the hotel data
@@ -78,8 +84,9 @@ hotels %>%
 
 ```
 
-The resulting dataset has 50 000 rows and 23 columns.  The modification of the original consisted 
-of removing cancelled reservations only to concentrate on hotel stays that included children.
+The resulting dataset has 50 000 rows and 23 columns. The modification
+of the original consisted of removing cancelled reservations only to
+concentrate on hotel stays that included children.
 
 ```{r looking into the dataset}
 # Looking into the dataset
@@ -87,6 +94,7 @@ hotels %>%
   dplyr::glimpse()
 
 ```
+
 ```{r looking into the data using skimr}
 # Looking into the data using skimr
 hotels %>% 
@@ -94,8 +102,8 @@ hotels %>%
 
 ```
 
-The main objective is to predict which hotel actual stays included children or babies 
-and which did not.  
+The main objective is to predict which hotel actual stays included
+children or babies and which did not.
 
 Let's check the variable children.
 
@@ -108,21 +116,30 @@ hotels %>%
 
 ```
 
-The dataset show an imbalance since only 8.1% of our date are hotel stays that contain 
-children.  This can be tackled with functions within `tidymodels` such as `recipes` 
-however, this will be used as-is.  
+The dataset show an imbalance since only 8.1% of our date are hotel
+stays that contain children. This can be tackled with functions within
+`tidymodels` such as `recipes` however, this will be used as-is.
 
-Once this has been done then we're ready to start creating our models.  
-As seen in the first session where we followed [Rebecca Barter's example](02_tidymodels-tidy-machine-learning.html), 
-the steps to follow will be:
- a. Getting our train, validation, and testing datasets
- b. Resampling
- c. Define the recipe
- d. Specifying the model
- e. Creating a workflow
- f. Tune the model
- e. Evaluating our resulting model
- f. Using the model
+Once this has been done then we're ready to start creating our models.\
+As seen in the first session where we followed [Rebecca Barter's
+example](02_tidymodels-tidy-machine-learning.html), the steps to follow
+will be:
+
+-   Getting our train, validation, and testing datasets
+
+-   Resampling
+
+-   Define the recipe
+
+-   Specifying the model
+
+-   Creating a workflow
+
+-   Tune the model
+
+-   Evaluating our resulting model
+
+-   Using the model
 
 ## Data Splitting and Resampling
 
