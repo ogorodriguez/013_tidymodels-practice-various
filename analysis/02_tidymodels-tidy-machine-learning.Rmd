@@ -671,7 +671,18 @@ The predicted diabetes status of this new woman is "negative".
 
 
 
+```{r}
+rf_tune_results$.metrics
 
+```
+
+
+
+```{r}
+final_model %>% 
+  extract_fit_parsnip() %>% 
+  vip::vip(num_features = 20)
+```
 
 
 

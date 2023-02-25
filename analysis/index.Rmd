@@ -21,6 +21,7 @@ Please visit the [tidymodels](https://www.tidymodels.org/) website for a deep an
 **Content**
 
 -   [Tidymodels with Rebecca Barter](02_tidymodels-tidy-machine-learning.html)
--   [Classification with Tidymodels](01_classification-tidymodels.html)
+-   [Hotel Booking Prediction Case](01_classification-tidymodels.html)
+
 
 
